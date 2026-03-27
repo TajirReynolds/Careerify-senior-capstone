@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VisaJob Connect</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- CSS File -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- Login Form -->
+    <div class="form-box active" id="login-form">
+        <form>
+            <h2>Login</h2>
+
+            <input type="email" placeholder="Email" required>
+            <input type="password" placeholder="Password" required>
+
+            <button type="submit">Login</button>
+
+            <p>Don't have an account? <a href="#" onclick="showRegister()">Register</a></p>
+        </form>
+    </div>
+
+    <!-- Register Form -->
+    <div class="form-box" id="register-form">
+        <form>
+            <h2>Register</h2>
+
+            <input type="text" placeholder="Full Name" required>
+            <input type="email" placeholder="Email" required>
+            <input type="password" placeholder="Password" required>
+
+            <select required>
+                <option value="">--Select Role--</option>
+                <option value="student">International Student</option>
+                <option value="employer">Employer</option>
+                <option value="employee">Employee</option>
+            </select>
+
+            <button type="submit">Register</button>
+
+            <p>Already have an account? <a href="#" onclick="showLogin()">Login</a></p>
+        </form>
+    </div>
+
+</div>
+
+<script>
+
+function showRegister(){
+    document.getElementById("login-form").classList.remove("active");
+    document.getElementById("register-form").classList.add("active");
+}
+
+function showLogin(){
+    document.getElementById("register-form").classList.remove("active");
+    document.getElementById("login-form").classList.add("active");
+}
+
+</script>
+
+</body>
+</html>
