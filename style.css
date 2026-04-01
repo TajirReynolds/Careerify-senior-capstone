@@ -1,10 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
 
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:"poppins",serif;
+    font-family:"Poppins", sans-serif;
 }
 
 body{
@@ -17,54 +17,94 @@ body{
 }
 
 .container{
-    margin: 0 15px;
-
+    margin:0 15px;
+    width:100%;
+    display:flex;
+    justify-content:center;
 }
 
+/* Form Card */
 .form-box{
     width:100%;
     max-width:450px;
     padding:30px;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    background:#fff;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,0.1);
     display:none;
+    animation:fadeIn 0.3s ease;
 }
 
 .form-box.active{
-    display: block;
-    
+    display:block;
+}
+
+/* Smooth transition */
+@keyframes fadeIn{
+    from{
+        opacity:0;
+        transform:translateY(10px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
 }
 
 h2{
-    font-size:34px;
+    font-size:30px;
     text-align:center;
     margin-bottom:20px;
 }
 
-input{
-    width:100%;
-    padding:12px;
-    background:#eee;
-    border-radius: 6px;
-    border:none;
-    outline:none;
-    font-size: 16px;
-    color: #333;
-    margin-bottom: 20px;
-}
+/* Inputs & Selects */
+input,
 select{
     width:100%;
     padding:12px;
     background:#eee;
-    border-radius: 6px;
+    border-radius:6px;
     border:none;
     outline:none;
-    font-size: 16px;
-    color: #333;
-    margin-bottom: 20px;
+    font-size:16px;
+    color:#333;
+    margin-bottom:20px;
+    transition:0.2s;
 }
 
+/* Focus effect */
+input:focus,
+select:focus{
+    background:#e0e0e0;
+}
+
+/* File input */
+input[type="file"]{
+    background:#fff;
+    border:2px dashed #ccc;
+    padding:10px;
+    cursor:pointer;
+}
+
+/* Resume section */
+#resume-section{
+    margin-bottom:20px;
+}
+
+/* Job form labels */
+#job-post-form label{
+    font-size:14px;
+    font-weight:500;
+    display:block;
+    margin-bottom:5px;
+}
+
+/* Date input cursor */
+input[type="date"]{
+    cursor:pointer;
+}
+
+/* Buttons */
 button{
     width:100%;
     padding:12px;
@@ -74,27 +114,40 @@ button{
     color:#fff;
     font-weight:500;
     margin-bottom:20px;
-    transition:0.5s;
+    transition:0.3s;
+    border:none;
+    cursor:pointer;
 }
 
 button:hover{
-    background: #6884d3;
+    background:#6884d3;
 }
 
-
-
+/* Text */
 p{
-    font-size: 14.5px;
+    font-size:14.5px;
     text-align:center;
     margin-bottom:10px;
 }
 
+/* Links */
 p a{
-    color:7494ec;
+    color:#7494ec;
     text-decoration:none;
+    font-weight:500;
 }
 
 p a:hover{
     text-decoration:underline;
+}
 
+/* Responsive tweak */
+@media (max-width:500px){
+    .form-box{
+        padding:20px;
+    }
+
+    h2{
+        font-size:24px;
+    }
 }
