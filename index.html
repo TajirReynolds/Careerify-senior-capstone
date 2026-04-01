@@ -21,34 +21,80 @@
         <form>
             <h2>Login</h2>
 
-            <input type="email" placeholder="Email" required>
-            <input type="password" placeholder="Password" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
 
             <button type="submit">Login</button>
 
-            <p>Don't have an account? <a href="#" onclick="showRegister()">Register</a></p>
+            <p>Don't have an account? 
+                <a href="#" onclick="showForm('register-form'); return false;">Register</a>
+            </p>
         </form>
     </div>
 
     <!-- Register Form -->
     <div class="form-box" id="register-form">
-        <form>
+        <form enctype="multipart/form-data" onsubmit="handleRegister(event)">
             <h2>Register</h2>
 
-            <input type="text" placeholder="Full Name" required>
-            <input type="email" placeholder="Email" required>
-            <input type="password" placeholder="Password" required>
+            <input type="text" name="fullname" placeholder="Full Name" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
 
-            <select required>
+            <select id="role" name="role" onchange="toggleResumeUpload()" required>
                 <option value="">--Select Role--</option>
                 <option value="student">International Student</option>
                 <option value="employer">Employer</option>
                 <option value="employee">Employee</option>
             </select>
 
+            <!-- Resume Upload -->
+            <div id="resume-section" style="display:none; margin-top:10px;">
+                <label>Upload Resume:</label><br><br>
+                <input type="file" name="resume" accept=".pdf,.doc,.docx">
+            </div>
+
             <button type="submit">Register</button>
 
-            <p>Already have an account? <a href="#" onclick="showLogin()">Login</a></p>
+            <p>Already have an account? 
+                <a href="#" onclick="showForm('login-form'); return false;">Login</a>
+            </p>
+        </form>
+    </div>
+
+    <!-- Job Post Form -->
+    <div class="form-box" id="job-post-form">
+        <form>
+            <h2>Post a Job</h2>
+
+            <input type="text" name="job_title" placeholder="Job Title" required>
+            <input type="text" name="salary" placeholder="Salary (e.g., $60,000/year)" required>
+            <input type="text" name="location" placeholder="Job Location (City, Country)" required>
+
+            <label>Is this job remote?</label>
+            <select name="remote" required>
+                <option value="">--Select--</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+
+            <label>Degree Requirement:</label>
+            <select name="degree" required>
+                <option value="">--Select--</option>
+                <option value="none">None</option>
+                <option value="bachelor">Bachelor's</option>
+                <option value="master">Master's</option>
+                <option value="phd">PhD</option>
+            </select>
+
+            <label>Date Posted:</label>
+            <input type="date" name="date_posted" required>
+
+            <button type="submit">Post Job</button>
+
+            <p>
+                <a href="#" onclick="showForm('login-form'); return false;">Logout</a>
+            </p>
         </form>
     </div>
 
@@ -56,14 +102,38 @@
 
 <script>
 
-function showRegister(){
-    document.getElementById("login-form").classList.remove("active");
-    document.getElementById("register-form").classList.add("active");
+// ✅ Universal form switcher (BEST version)
+function showForm(formId) {
+    document.querySelectorAll(".form-box").forEach(function(form) {
+        form.classList.remove("active");
+    });
+
+    document.getElementById(formId).classList.add("active");
 }
 
-function showLogin(){
-    document.getElementById("register-form").classList.remove("active");
-    document.getElementById("login-form").classList.add("active");
+// ✅ Resume toggle
+function toggleResumeUpload(){
+   const role = document.getElementById("role").value;
+   const resumeSection = document.getElementById("resume-section");
+
+   if(role === "employee"){
+        resumeSection.style.display = "block";
+   } else {
+        resumeSection.style.display = "none";
+   }
+}
+
+// ✅ Handle register submit (redirect employer)
+function handleRegister(event){
+    event.preventDefault(); // stop page reload
+
+    const role = document.getElementById("role").value;
+
+    if(role === "employer"){
+        showForm("job-post-form");
+    } else {
+        showForm("login-form");
+    }
 }
 
 </script>
