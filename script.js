@@ -14,3 +14,99 @@ function showForm(formId) {
         console.warn(`No form found with ID: ${formId}`);
     }
 }
+// ================= RESUME TOGGLE =================
+function toggleResumeUpload(){
+   const role = document.getElementById("role").value;
+   const resumeSection = document.getElementById("resume-section");
+
+   if(role === "employee"){
+        resumeSection.style.display = "block";
+   } else {
+        resumeSection.style.display = "none";
+   }
+}
+
+
+// ================= REGISTER HANDLER =================
+function handleRegister(event){
+    event.preventDefault();
+
+    const role = document.getElementById("role").value;
+
+    // Employer goes to job posting
+    if(role === "employer"){
+        showForm("job-post-form");
+    } 
+    // Everyone else goes to login
+    else {
+        showForm("login-form");
+    }
+}
+
+
+// ================= JOB SYSTEM =================
+let jobs = [];
+
+// Handle job form submission
+function handleJobPost(event){
+    event.preventDefault();
+
+    const form = event.target;
+
+    const job = {
+        title: form.job_title.value,
+        salary: form.salary.value,
+        location: form.location.value,
+        remote: form.remote.value,
+        degree: form.degree.value,
+        date: form.date_posted.value
+    };
+
+    jobs.push(job);
+
+    renderJobs();
+
+    form.reset();
+
+    // Go to listings page
+    showForm("job-listings");
+}
+
+
+// ================= RENDER JOBS =================
+function renderJobs(){
+    const jobList = document.getElementById("jobList");
+
+    if (!jobList) {
+        console.warn("jobList container not found");
+        return;
+    }
+
+    jobList.innerHTML = "";
+
+    jobs.forEach((job, index) => {
+        const div = document.createElement("div");
+        div.classList.add("job");
+
+        div.innerHTML = `
+            <h3>${job.title}</h3>
+            <p><strong>Salary:</strong> ${job.salary}</p>
+            <p><strong>Location:</strong> ${job.location}</p>
+            <p><strong>Remote:</strong> ${job.remote}</p>
+            <p><strong>Degree:</strong> ${job.degree}</p>
+            <p><strong>Posted:</strong> ${job.date}</p>
+        `;
+
+        jobList.appendChild(div);
+    });
+}
+
+
+// ================= OPTIONAL: AUTO SET TODAY'S DATE =================
+document.addEventListener("DOMContentLoaded", () => {
+    const dateInput = document.querySelector("input[name='date_posted']");
+    if (dateInput) {
+        const today = new Date().toISOString().split("T")[0];
+        dateInput.value = today;
+    }
+});
