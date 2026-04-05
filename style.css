@@ -151,3 +151,47 @@ p a:hover{
         font-size:24px;
     }
 }
+/* Job Listings */
+#jobList {
+    margin-top: 10px;
+}
+
+.job {
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border-left: 4px solid #7494ec;
+    animation: fadeIn 0.3s ease;
+}
+
+.job h3 {
+    margin-bottom: 5px;
+}
+
+.job p {
+    text-align: left;
+    margin-bottom: 5px;
+}
+/* Job Listings */
+#jobList {
+    margin-top: 10px;
+}
+
+.job {
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border-left: 4px solid #7494ec;
+    animation: fadeIn 0.3s ease;
+}
+
+.job h3 {
+    margin-bottom: 5px;
+}
+
+.job p {
+    text-align: left;
+    margin-bottom: 5px;
+}
