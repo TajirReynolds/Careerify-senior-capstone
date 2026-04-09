@@ -1,112 +1,86 @@
-function showForm(formId) {
-    // Hide all forms
-    document.querySelectorAll(".form-box").forEach(function(form) {
-        form.classList.remove("active");
+document.addEventListener('DOMContentLoaded', function () {
+    const isEmployer = localStorage.getItem('role') === 'employer';
+
+const addJobSection = document.getElementById('addJobSection');
+const notEmployerMessage = document.getElementById('notEmployerMessage');
+
+if (isEmployer) {
+  addJobSection.classList.remove('hidden');
+} else {
+  notEmployerMessage.classList.remove('hidden');
+}
+  const searchBar = document.getElementById('searchBar');
+  const jobList = document.getElementById('jobList');
+
+  if (!searchBar || !jobList) return;
+
+  // Render job objects into the DOM
+  function renderJobs(jobs) {
+    jobList.innerHTML = '';
+    if (!jobs || jobs.length === 0) {
+      jobList.innerHTML = '<p>No jobs posted yet.</p>';
+      return;
+    }
+    jobs.forEach(job => {
+      const div = document.createElement('div');
+      div.className = 'job';
+      div.innerHTML = `
+        <h4>${escapeHtml(job.title)}</h4>
+        <p><strong>Company:</strong> ${escapeHtml(job.company)}</p>
+        <p><strong>Location:</strong> ${escapeHtml(job.location)}</p>
+        <p><strong>Type:</strong> ${escapeHtml(job.employment_type || '')}</p>
+        <p><strong>Experience:</strong> ${escapeHtml(job.experience_level || '')}</p>
+        <p><strong>Salary:</strong> ${escapeHtml(job.salary || '')}</p>
+        <p>${nl2br(escapeHtml(job.description || ''))}</p>
+        ${job.application_link ? `<p><a href="${escapeAttr(job.application_link)}" target="_blank">Apply</a></p>` : ''}
+      `;
+      jobList.appendChild(div);
     });
+  }
 
-    // Get the form to show
-    const formToShow = document.getElementById(formId);
+  function nl2br(s){ return s.replace(/\n/g,'<br>'); }
+  function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function escapeAttr(s){ return String(s).replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 
-    // Only add active if the element exists
-    if (formToShow) {
-        formToShow.classList.add("active");
-    } else {
-        console.warn(`No form found with ID: ${formId}`);
+  // fetch jobs from server
+  function loadJobs() {
+    fetch('get_jobs.php', { cache: 'no-store' })
+      .then(r => r.ok ? r.json() : [])
+      .then(data => {
+        renderJobs(data);
+        filterJobs(searchBar.value);
+      })
+      .catch(() => {
+        jobList.innerHTML = '<p>Could not load jobs.</p>';
+      });
+  }
+
+  function filterJobs(query) {
+    const q = query.trim().toLowerCase();
+    const jobs = Array.from(jobList.querySelectorAll('.job'));
+    if (q === '') {
+      jobs.forEach(j => (j.style.display = ''));
+      return;
     }
-}
-// ================= RESUME TOGGLE =================
-function toggleResumeUpload(){
-   const role = document.getElementById("role").value;
-   const resumeSection = document.getElementById("resume-section");
-
-   if(role === "employee"){
-        resumeSection.style.display = "block";
-   } else {
-        resumeSection.style.display = "none";
-   }
-}
-
-
-// ================= REGISTER HANDLER =================
-function handleRegister(event){
-    event.preventDefault();
-
-    const role = document.getElementById("role").value;
-
-    // Employer goes to job posting
-    if(role === "employer"){
-        showForm("job-post-form");
-    } 
-    // Everyone else goes to login
-    else {
-        showForm("login-form");
-    }
-}
-
-
-// ================= JOB SYSTEM =================
-let jobs = [];
-
-// Handle job form submission
-function handleJobPost(event){
-    event.preventDefault();
-
-    const form = event.target;
-
-    const job = {
-        title: form.job_title.value,
-        salary: form.salary.value,
-        location: form.location.value,
-        remote: form.remote.value,
-        degree: form.degree.value,
-        date: form.date_posted.value
-    };
-
-    jobs.push(job);
-
-    renderJobs();
-
-    form.reset();
-
-    // Go to listings page
-    showForm("job-listings");
-}
-
-
-// ================= RENDER JOBS =================
-function renderJobs(){
-    const jobList = document.getElementById("jobList");
-
-    if (!jobList) {
-        console.warn("jobList container not found");
-        return;
-    }
-
-    jobList.innerHTML = "";
-
-    jobs.forEach((job, index) => {
-        const div = document.createElement("div");
-        div.classList.add("job");
-
-        div.innerHTML = `
-            <h3>${job.title}</h3>
-            <p><strong>Salary:</strong> ${job.salary}</p>
-            <p><strong>Location:</strong> ${job.location}</p>
-            <p><strong>Remote:</strong> ${job.remote}</p>
-            <p><strong>Degree:</strong> ${job.degree}</p>
-            <p><strong>Posted:</strong> ${job.date}</p>
-        `;
-
-        jobList.appendChild(div);
+    jobs.forEach(j => {
+      const text = j.textContent.toLowerCase();
+      j.style.display = text.includes(q) ? '' : 'none';
     });
-}
+  }
 
+  // live filter
+  searchBar.addEventListener('input', function (e) {
+    filterJobs(e.target.value);
+  });
 
-// ================= OPTIONAL: AUTO SET TODAY'S DATE =================
-document.addEventListener("DOMContentLoaded", () => {
-    const dateInput = document.querySelector("input[name='date_posted']");
-    if (dateInput) {
-        const today = new Date().toISOString().split("T")[0];
-        dateInput.value = today;
+  // Enter focuses first visible result
+  searchBar.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const first = jobList.querySelector('.job:not([style*="display: none"])');
+      if (first) first.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+  });
+
+  loadJobs();
 });

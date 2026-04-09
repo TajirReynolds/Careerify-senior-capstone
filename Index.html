@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<title>Job Search</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Job Search</h2>
+
+
+<input type="text" id="searchBar" placeholder="Search jobs...">
+
+<div id="jobList"></div>
+
+<hr>
+<div id="addJobSection"></div>
+
+<h3>Add Job Posting</h3>
+<h4>Enter job details below</h4>
+<div id="addJobSection" class="hidden">
+    <h3>Add Job Posting</h3>
+    <h4>Enter job details below</h4>
+
+    <form id="jobForm" action="save_job.php" method="post">
+        <p>Job Title:</p>
+        <input type="text" id="jobTitle" name="title" required>
+
+        <p>Company Name:</p>
+        <input type="text" id="companyName" name="company" required>
+
+        <p>Salary Range:</p>
+        <input type="text" id="salaryRange" name="salary" required>
+
+        <p>Requirements:</p>
+        <input type="text" id="requirements" name="requirements" required>
+
+        <p>Location:</p>
+        <input type="text" id="location" name="location" required>
+
+        <p>Employment Type:</p>
+        <input type="text" id="employmentType" name="employment_type" required>
+
+        <p>Experience Level:</p>
+        <input type="text" id="experienceLevel" name="experience_level" required>
+
+        <p>H1 Visa required:</p>
+        <select id="h1Visa" name="h1_visa" required>
+            <option value="">-- Choose --</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+        </select>
+
+        <p>Application Deadline:</p>
+        <input type="date" id="applicationDeadline" name="deadline" required>
+
+        <p>Job Description:</p>
+        <input type="text" id="jobDescription" name="description" required>
+
+        <p>Company Website:</p>
+        <input type="text" id="applicationLink" name="application_link">
+
+        <p>Contact Email:</p>
+        <input type="text" id="contactEmail" name="contact_email" required>
+
+        <button type="submit">Post Job</button>
+    </form>
+</div>
+
+<div id="notEmployerMessage" class="hidden">
+    <p><em>Only employers can post jobs. Please <a href="main/index.html">log in as an employer</a>.</em></p>
+</div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
