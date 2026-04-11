@@ -110,3 +110,35 @@ document.addEventListener("DOMContentLoaded", () => {
         dateInput.value = today;
     }
 });
+
+// ================= PROFILE SYSTEM =================
+// ------Helped By Ai-----
+
+// Load user data into profile
+function loadProfile(){
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if(user){
+        document.getElementById("profile-name").textContent = user.name;
+        document.getElementById("profile-email").textContent = user.email;
+        document.getElementById("profile-role").textContent = user.role;
+    }
+}
+
+// After login
+function handleLogin(event){
+    event.preventDefault();
+
+    loadProfile();
+    showForm("profile-page");
+}
+
+// helped by Ai, Route user after profile//
+function goToDashboard(){
+    const user = JSON.parse(localStorage.getItem("user"));
+    if(user.role === "employer"){
+        showForm("job-post-form");
+    }else {
+        showForm("job-listings");
+    }
+}
