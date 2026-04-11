@@ -5,10 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VisaJob Connect</title>
 
-    <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-
-    <!-- CSS File -->
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -18,7 +15,7 @@
 
     <!-- Login Form -->
     <div class="form-box active" id="login-form">
-        <form>
+        <form onsubmit="handleLogin(event)">
             <h2>Login</h2>
 
             <input type="email" name="email" placeholder="Email" required>
@@ -48,7 +45,6 @@
                 <option value="employee">Employee</option>
             </select>
 
-            <!-- Resume Upload -->
             <div id="resume-section" style="display:none; margin-top:10px;">
                 <label>Upload Resume:</label><br><br>
                 <input type="file" name="resume" accept=".pdf,.doc,.docx">
@@ -62,33 +58,37 @@
         </form>
     </div>
 
+    <!-- Profile Page -->
+    <div class="form-box" id="profile-page">
+        <div class="profile-card">
+            <h2>User Profile</h2>
+
+            <p><strong>Name:</strong> <span id="profile-name">N/A</span></p>
+            <p><strong>Email:</strong> <span id="profile-email">N/A</span></p>
+            <p><strong>Role:</strong> <span id="profile-role">N/A</span></p>
+
+            <button onclick="goToDashboard()">Continue</button>
+            <button onclick="showForm('login-form')">Logout</button>
+        </div>
+    </div>
+
     <!-- Job Post Form -->
     <div class="form-box" id="job-post-form">
-        <div class="form-box" id="job-listings">
-    <h2>Job Listings</h2>
-    <div id="jobList"></div>
-
-    <p>
-        <a href="#" onclick="showForm('job-post-form'); return false;">
-            Post Another Job
-        </a>
-    </p>
-</div>
-        <form>
+        <form onsubmit="handleJobPost(event)">
             <h2>Post a Job</h2>
 
             <input type="text" name="job_title" placeholder="Job Title" required>
-            <input type="text" name="salary" placeholder="Salary (e.g., $60,000/year)" required>
-            <input type="text" name="location" placeholder="Job Location (City, Country)" required>
+            <input type="text" name="salary" placeholder="Salary" required>
+            <input type="text" name="location" placeholder="Location" required>
 
-            <label>Is this job remote?</label>
+            <label>Remote?</label>
             <select name="remote" required>
                 <option value="">--Select--</option>
                 <option value="yes">Yes</option>
                 <option value="no">No</option>
             </select>
 
-            <label>Degree Requirement:</label>
+            <label>Degree:</label>
             <select name="degree" required>
                 <option value="">--Select--</option>
                 <option value="none">None</option>
@@ -103,9 +103,23 @@
             <button type="submit">Post Job</button>
 
             <p>
-                <a href="#" onclick="showForm('login-form'); return false;">Logout</a>
+                <a href="#" onclick="showForm('profile-page'); return false;">Back to Profile</a>
             </p>
         </form>
+    </div>
+
+    <!-- Job Listings -->
+    <div class="form-box" id="job-listings">
+        <h2>Job Listings</h2>
+        <div id="jobList"></div>
+
+        <p>
+            <a href="#" onclick="showForm('job-post-form'); return false;">Post Another Job</a>
+        </p>
+
+        <p>
+            <a href="#" onclick="showForm('profile-page'); return false;">Back to Profile</a>
+        </p>
     </div>
 
 </div>
@@ -114,7 +128,7 @@
 
 // ================= FORM SWITCHER =================
 function showForm(formId) {
-    document.querySelectorAll(".form-box").forEach(function(form) {
+    document.querySelectorAll(".form-box").forEach(form => {
         form.classList.remove("active");
     });
 
@@ -122,8 +136,50 @@ function showForm(formId) {
 
     if (formToShow) {
         formToShow.classList.add("active");
+    }
+}
+
+// ================= PROFILE SYSTEM =================
+function loadProfile(){
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if(user){
+        document.getElementById("profile-name").textContent = user.name;
+        document.getElementById("profile-email").textContent = user.email;
+        document.getElementById("profile-role").textContent = user.role;
+    }
+}
+
+function handleLogin(event){
+    event.preventDefault();
+    loadProfile();
+    showForm("profile-page");
+}
+
+function handleRegister(event){
+    event.preventDefault();
+
+    const form = event.target;
+
+    const user = {
+        name: form.fullname.value,
+        email: form.email.value,
+        role: document.getElementById("role").value
+    };
+
+    localStorage.setItem("user", JSON.stringify(user));
+
+    loadProfile();
+    showForm("profile-page");
+}
+
+function goToDashboard(){
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if(user.role === "employer"){
+        showForm("job-post-form");
     } else {
-        console.warn(`No form found with ID: ${formId}`);
+        showForm("job-listings");
     }
 }
 
@@ -132,24 +188,7 @@ function toggleResumeUpload(){
    const role = document.getElementById("role").value;
    const resumeSection = document.getElementById("resume-section");
 
-   if(role === "employee"){
-        resumeSection.style.display = "block";
-   } else {
-        resumeSection.style.display = "none";
-   }
-}
-
-// ================= REGISTER LOGIC =================
-function handleRegister(event){
-    event.preventDefault();
-
-    const role = document.getElementById("role").value;
-
-    if(role === "employer"){
-        showForm("job-post-form");
-    } else {
-        showForm("login-form");
-    }
+   resumeSection.style.display = (role === "employee") ? "block" : "none";
 }
 
 // ================= JOB SYSTEM =================
@@ -170,9 +209,7 @@ function handleJobPost(event){
     };
 
     jobs.push(job);
-
     renderJobs();
-
     form.reset();
 
     showForm("job-listings");
@@ -180,12 +217,6 @@ function handleJobPost(event){
 
 function renderJobs(){
     const jobList = document.getElementById("jobList");
-
-    if (!jobList) {
-        console.warn("jobList container not found");
-        return;
-    }
-
     jobList.innerHTML = "";
 
     jobs.forEach(job => {
