@@ -1,197 +1,152 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+function showForm(formId) {
+    // Hide all forms
+    document.querySelectorAll(".form-box").forEach(function(form) {
+        form.classList.remove("active");
+    });
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:"Poppins", sans-serif;
-}
+    // Get the form to show
+    const formToShow = document.getElementById(formId);
 
-body{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    min-height:100vh;
-    background:linear-gradient(to right,#10ff44,#eeeaea);
-    color:#333;
-}
-
-.container{
-    margin:0 15px;
-    width:100%;
-    display:flex;
-    justify-content:center;
-}
-
-/* Form Card */
-.form-box{
-    width:100%;
-    max-width:450px;
-    padding:30px;
-    background:#fff;
-    border-radius:10px;
-    box-shadow:0 0 10px rgba(0,0,0,0.1);
-    display:none;
-    animation:fadeIn 0.3s ease;
-}
-
-.form-box.active{
-    display:block;
-}
-
-/* Smooth transition */
-@keyframes fadeIn{
-    from{
-        opacity:0;
-        transform:translateY(10px);
+    // Only add active if the element exists
+    if (formToShow) {
+        formToShow.classList.add("active");
+    } else {
+        console.warn(`No form found with ID: ${formId}`);
     }
-    to{
-        opacity:1;
-        transform:translateY(0);
+}
+// ================= RESUME TOGGLE =================
+function toggleResumeUpload(){
+   const role = document.getElementById("role").value;
+   const resumeSection = document.getElementById("resume-section");
+
+   if(role === "employee"){
+        resumeSection.style.display = "block";
+   } else {
+        resumeSection.style.display = "none";
+   }
+}
+
+
+// ================= REGISTER HANDLER =================
+function handleRegister(event){
+    event.preventDefault();
+
+    const role = document.getElementById("role").value;
+
+    // Employer goes to job posting
+    if(role === "employer"){
+        showForm("job-post-form");
+    } 
+    // Everyone else goes to login
+    else {
+        showForm("login-form");
     }
 }
 
-h2{
-    font-size:30px;
-    text-align:center;
-    margin-bottom:20px;
+
+// ================= JOB SYSTEM =================
+let jobs = [];
+
+// Handle job form submission
+function handleJobPost(event){
+    event.preventDefault();
+
+    const form = event.target;
+
+    const job = {
+        title: form.job_title.value,
+        salary: form.salary.value,
+        location: form.location.value,
+        remote: form.remote.value,
+        degree: form.degree.value,
+        date: form.date_posted.value
+    };
+
+    jobs.push(job);
+
+    renderJobs();
+
+    form.reset();
+
+    // Go to listings page
+    showForm("job-listings");
 }
 
-/* Inputs & Selects */
-input,
-select{
-    width:100%;
-    padding:12px;
-    background:#eee;
-    border-radius:6px;
-    border:none;
-    outline:none;
-    font-size:16px;
-    color:#333;
-    margin-bottom:20px;
-    transition:0.2s;
-}
 
-/* Focus effect */
-input:focus,
-select:focus{
-    background:#e0e0e0;
-}
+// ================= RENDER JOBS =================
+function renderJobs(){
+    const jobList = document.getElementById("jobList");
 
-/* File input */
-input[type="file"]{
-    background:#fff;
-    border:2px dashed #ccc;
-    padding:10px;
-    cursor:pointer;
-}
-
-/* Resume section */
-#resume-section{
-    margin-bottom:20px;
-}
-
-/* Job form labels */
-#job-post-form label{
-    font-size:14px;
-    font-weight:500;
-    display:block;
-    margin-bottom:5px;
-}
-
-/* Date input cursor */
-input[type="date"]{
-    cursor:pointer;
-}
-
-/* Buttons */
-button{
-    width:100%;
-    padding:12px;
-    background:#7494ec;
-    border-radius:6px;
-    font-size:16px;
-    color:#fff;
-    font-weight:500;
-    margin-bottom:20px;
-    transition:0.3s;
-    border:none;
-    cursor:pointer;
-}
-
-button:hover{
-    background:#6884d3;
-}
-
-/* Text */
-p{
-    font-size:14.5px;
-    text-align:center;
-    margin-bottom:10px;
-}
-
-/* Links */
-p a{
-    color:#7494ec;
-    text-decoration:none;
-    font-weight:500;
-}
-
-p a:hover{
-    text-decoration:underline;
-}
-
-/* Responsive tweak */
-@media (max-width:500px){
-    .form-box{
-        padding:20px;
+    if (!jobList) {
+        console.warn("jobList container not found");
+        return;
     }
 
-    h2{
-        font-size:24px;
+    jobList.innerHTML = "";
+
+    jobs.forEach((job, index) => {
+        const div = document.createElement("div");
+        div.classList.add("job");
+
+        div.innerHTML = `
+            <h3>${job.title}</h3>
+            <p><strong>Salary:</strong> ${job.salary}</p>
+            <p><strong>Location:</strong> ${job.location}</p>
+            <p><strong>Remote:</strong> ${job.remote}</p>
+            <p><strong>Degree:</strong> ${job.degree}</p>
+            <p><strong>Posted:</strong> ${job.date}</p>
+        `;
+
+        jobList.appendChild(div);
+    });
+}
+
+
+// ================= OPTIONAL: AUTO SET TODAY'S DATE =================
+document.addEventListener("DOMContentLoaded", () => {
+    const dateInput = document.querySelector("input[name='date_posted']");
+    if (dateInput) {
+        const today = new Date().toISOString().split("T")[0];
+        dateInput.value = today;
+    }
+});
+
+// ================= PROFILE SYSTEM =================
+// ------Helped By Ai-----
+
+// Load user data into profile
+function loadProfile(){
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if(user){
+        document.getElementById("profile-name").textContent = user.name;
+        document.getElementById("profile-email").textContent = user.email;
+        document.getElementById("profile-role").textContent = user.role;
     }
 }
-/* Job Listings */
-#jobList {
-    margin-top: 10px;
+
+// After login
+function handleLogin(event){
+    event.preventDefault();
+
+    loadProfile();
+    showForm("profile-page");
 }
 
-.job {
-    background: #f9f9f9;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    border-left: 4px solid #7494ec;
-    animation: fadeIn 0.3s ease;
+// helped by Ai, Route user after profile//
+function goToDashboard(){
+    const user = JSON.parse(localStorage.getItem("user"));
+    if(user.role === "employer"){
+        showForm("job-post-form");
+    }else {
+        showForm("job-listings");
+    }
 }
 
-.job h3 {
-    margin-bottom: 5px;
-}
+    
+    
+    
+    
 
-.job p {
-    text-align: left;
-    margin-bottom: 5px;
-}
-/* Job Listings */
-#jobList {
-    margin-top: 10px;
-}
 
-.job {
-    background: #f9f9f9;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    border-left: 4px solid #7494ec;
-    animation: fadeIn 0.3s ease;
-}
-
-.job h3 {
-    margin-bottom: 5px;
-}
-
-.job p {
-    text-align: left;
-    margin-bottom: 5px;
-}
+    
