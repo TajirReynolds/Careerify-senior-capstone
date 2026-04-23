@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+﻿document.addEventListener('DOMContentLoaded', function () {
     const isEmployer = localStorage.getItem('role') === 'employer';
 
 const addJobSection = document.getElementById('addJobSection');
@@ -36,7 +36,51 @@ if (isEmployer) {
       `;
       jobList.appendChild(div);
     });
-  }
+    }
+
+  function filterByZip() {
+      const userZip = parseInt(document.getElementById("userZip").value);
+      const jobList = document.getElementById("jobList");
+
+      if (!userZip) return;
+
+      const range = 50;
+
+      // Filter jobs in range
+      let nearbyJobs = jobs.filter(job => {
+          return Math.abs(userZip - job.zip) <= range;
+      });
+
+      // Sort closest → farthest
+      nearbyJobs.sort((a, b) => {
+          return Math.abs(userZip - a.zip) - Math.abs(userZip - b.zip);
+      });
+
+      // Render results
+      jobList.innerHTML = "";
+
+      if (nearbyJobs.length === 0) {
+          jobList.innerHTML = "<p>No nearby jobs found</p>";
+          return;
+      }
+
+      nearbyJobs.forEach(job => {
+          const div = document.createElement("div");
+          div.classList.add("job");
+
+          div.innerHTML = `
+          <h3>${job.title}</h3>
+          <p><strong>Salary:</strong> ${job.salary}</p>
+          <p><strong>Location:</strong> ${job.location}</p>
+          <p><strong>ZIP:</strong> ${job.zip}</p>
+          <p><strong>Remote:</strong> ${job.remote}</p>
+          <p><strong>Degree:</strong> ${job.degree}</p>
+          <p><strong>Posted:</strong> ${job.date}</p>
+      `;
+
+          jobList.appendChild(div);
+        });
+    }
 
   function nl2br(s){ return s.replace(/\n/g,'<br>'); }
   function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }

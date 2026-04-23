@@ -65,21 +65,25 @@
     <!-- Job Post Form -->
     <div class="form-box" id="job-post-form">
         <div class="form-box" id="job-listings">
-    <h2>Job Listings</h2>
-    <div id="jobList"></div>
+            <h2>Job Listings</h2>
+            <input type="number" id="userZip" placeholder="Enter your ZIP">
+            <button onclick="filterByZip()">Find Nearby Jobs</button>
+            <div id="jobList"></div>
 
-    <p>
-        <a href="#" onclick="showForm('job-post-form'); return false;">
-            Post Another Job
-        </a>
-    </p>
-</div>
+
+            <p>
+                <a href="#" onclick="showForm('job-post-form'); return false;">
+                    Post Another Job
+                </a>
+            </p>
+        </div>
         <form>
             <h2>Post a Job</h2>
 
             <input type="text" name="job_title" placeholder="Job Title" required>
             <input type="text" name="salary" placeholder="Salary (e.g., $60,000/year)" required>
             <input type="text" name="location" placeholder="Job Location (City, Country)" required>
+            <input type="number" name="zip" placeholder="ZIP Code" required>
 
             <label>Is this job remote?</label>
             <select name="remote" required>
@@ -164,6 +168,7 @@ function handleJobPost(event){
         title: form.job_title.value,
         salary: form.salary.value,
         location: form.location.value,
+        zip: parseInt(form.zip.value),
         remote: form.remote.value,
         degree: form.degree.value,
         date: form.date_posted.value
